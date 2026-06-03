@@ -1,6 +1,8 @@
 # Antoanela Ciulei — Marketing Portfolio
 
-A personal marketing portfolio built as a set of linked HTML files. No frameworks, no dependencies — just open `portfolio.html` in any browser and everything works.
+Hi! I'm Antoanela, a sales and operations professional based in Bucharest, Romania.
+
+This portfolio is a collection of work that reflects how I think about marketing — grounded in real retail experience, built with curiosity, and always honest about what's real and what's a creative exercise.
 
 ---
 
@@ -14,37 +16,26 @@ A personal marketing portfolio built as a set of linked HTML files. No framework
 | `brand-strategy.html` | Project 3: Brand Campaign Strategy (Nova Fashion GTM plan) |
 | `ad-campaign.html` | Project 4: Ad Campaign Simulation — "Dress Your Story" |
 
----
+## What's inside
 
-## How to use
+**Consumer Behaviour Study**
+An independent research project exploring how Romanian women discover fashion — online vs. in-store. Inspired by 8 months of client-facing observations at Mohito, Bucharest. The insights are real. The patterns surprised even me.
 
-### View locally
-Download all 5 files into the same folder. Open `portfolio.html` in your browser. All links between pages will work automatically.
+**Sales Performance Dashboard**
+A fictional but realistic KPI dashboard for a fashion retail brand, covering monthly revenue, team conversion, and category performance. Built to show how I think about data — not just what the numbers say, but what they mean.
 
-### Host on GitHub Pages (free)
-1. Create a free account at [github.com](https://github.com)
-2. Create a new repository (e.g. `antoanela-portfolio`)
-3. Upload all 5 HTML files
-4. Go to **Settings → Pages → Source → main branch**
-5. Your portfolio will be live at `yourusername.github.io/antoanela-portfolio`
+**Brand Campaign Strategy**
+A full go-to-market plan for launching a fictional Romanian fashion brand online. Includes positioning, audience personas, channel strategy, a 12-week timeline, and success metrics. One of the insights in here came directly from something I noticed on the shop floor.
 
----
-
-## Customisation
-
-To update your details, open each file in any text editor (Notepad, VS Code, etc.) and search for:
-- `Antoanela Ciulei` — your name
-- `anaantoanela13@gmail.com` — your email
-- `+40 774 511 332` — your phone number
-- `github.com/ciuleiantoanela` — your GitHub
+**Ad Campaign Simulation — "Dress Your Story"**
+A creative campaign concept for a neutral-toned workwear collection with personality badges. Covers platform strategy, ad creative rationale, audience targeting, and projected results. The badge idea was mine.
 
 ---
 
-## Notes
-- The Sales Dashboard and Ad Campaign are clearly marked as **fictional case studies**
-- The Consumer Behaviour Study is framed as an **independent study** inspired by real retail experience
-- The Brand Strategy is a **fictional GTM plan** for Nova Fashion
+## A note on honesty
+
+Where projects are fictional or simulated, they're clearly labelled as such. I'd rather show you how I think than pretend I've done things I haven't.
 
 ---
 
-Built with 🌸 by Antoanela Ciulei · Bucharest, Romania · 2025
+*Bucharest, Romania · anaantoanela13@gmail.com · github.com/ciuleiantoanela*
