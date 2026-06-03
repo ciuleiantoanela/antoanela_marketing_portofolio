@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Dashboard — Nova Fashion · Antoanela Ciulei</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --blush: #fce4ec; --rose: #f48fb1; --deep: #c2185b;
+      --ink: #1a1218; --muted: #7a6070; --cream: #fff8f9;
+      --border: #f8d7e3; --shadow: rgba(194,24,91,0.10);
+      --white: #ffffff;
+      --green: #43a047; --green-light: #e8f5e9;
+      --amber: #f9a825; --amber-light: #fffde7;
+      --red: #e53935; --red-light: #ffebee;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+
+    body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:.4; }
+
+    /* NAV */
+    nav { position:sticky; top:0; z-index:100; background:rgba(255,248,249,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 48px; display:flex; align-items:center; justify-content:space-between; height:60px; }
+    .nav-logo { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:var(--ink); text-decoration:none; }
+    .nav-logo span { color:var(--deep); font-style:italic; }
+    .nav-right { display:flex; align-items:center; gap:24px; }
+    .nav-badge { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--deep); background:var(--blush); border:1px solid var(--border); padding:4px 12px; border-radius:100px; font-weight:600; }
+    .nav-back { font-size:12px; color:var(--deep); text-decoration:none; display:flex; align-items:center; gap:6px; font-weight:500; transition:gap .2s; }
+    .nav-back:hover { gap:10px; }
+
+    /* HERO */
+    .hero { max-width:1100px; margin:0 auto; padding:56px 48px 40px; position:relative; z-index:1; }
+    .hero-top { display:flex; align-items:flex-start; justify-content:space-between; gap:32px; margin-bottom:40px; }
+    .hero-text { flex:1; }
+    .eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .eyebrow-tag { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--deep); font-weight:600; background:var(--blush); padding:5px 14px; border-radius:100px; border:1px solid var(--border); }
+    .eyebrow-date { font-size:12px; color:var(--muted); }
+    h1 { font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.1; color:var(--ink); margin-bottom:14px; }
+    h1 em { color:var(--deep); font-style:italic; }
+    .hero-sub { font-size:15px; line-height:1.75; color:var(--muted); max-width:520px; }
+    .hero-context { background:white; border:1px solid var(--border); border-radius:16px; padding:24px 28px; min-width:260px; }
+    .context-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--rose); font-weight:600; margin-bottom:14px; }
+    .context-row { display:flex; justify-content:space-between; font-size:13px; padding:7px 0; border-bottom:1px solid var(--border); color:var(--muted); }
+    .context-row:last-child { border-bottom:none; }
+    .context-row strong { color:var(--ink); font-weight:600; }
+
+    /* FILTER TABS */
+    .filters { max-width:1100px; margin:0 auto; padding:0 48px 28px; position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; }
+    .filter-btn { font-size:12px; font-weight:500; padding:8px 20px; border-radius:100px; border:1.5px solid var(--border); background:white; color:var(--muted); cursor:pointer; transition:all .2s; }
+    .filter-btn:hover { border-color:var(--rose); color:var(--deep); }
+    .filter-btn.active { background:var(--deep); color:white; border-color:var(--deep); }
+
+    /* MAIN GRID */
+    .dashboard { max-width:1100px; margin:0 auto; padding:0 48px 100px; position:relative; z-index:1; display:flex; flex-direction:column; gap:24px; }
+
+    /* KPI CARDS */
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+    .kpi-card { background:white; border:1px solid var(--border); border-radius:16px; padding:22px 24px; position:relative; overflow:hidden; transition:transform .2s, box-shadow .2s; }
+    .kpi-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--rose),var(--deep)); }
+    .kpi-card:hover { transform:translateY(-3px); box-shadow:0 10px 28px var(--shadow); }
+    .kpi-label { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:500; margin-bottom:10px; }
+    .kpi-value { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--ink); line-height:1; }
+    .kpi-sub { font-size:12px; margin-top:8px; display:flex; align-items:center; gap:5px; }
+    .kpi-up { color:var(--green); } .kpi-down { color:var(--red); } .kpi-neutral { color:var(--muted); }
+    .kpi-icon { position:absolute; top:20px; right:20px; font-size:22px; opacity:.15; }
+
+    /* CHART CARDS */
+    .chart-card { background:white; border:1px solid var(--border); border-radius:20px; padding:32px; }
+    .chart-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; }
+    .chart-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--ink); }
+    .chart-subtitle { font-size:13px; color:var(--muted); margin-top:4px; }
+    .chart-legend { display:flex; gap:16px; flex-wrap:wrap; }
+    .legend-item { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); }
+    .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    .charts-2col { display:grid; grid-template-columns:1.6fr 1fr; gap:20px; }
+    .charts-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+
+    /* TEAM TABLE */
+    .team-table { width:100%; border-collapse:collapse; margin-top:4px; }
+    .team-table th { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:500; padding:10px 14px; text-align:left; border-bottom:2px solid var(--border); }
+    .team-table td { font-size:13px; padding:12px 14px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:middle; }
+    .team-table tr:last-child td { border-bottom:none; }
+    .team-table tr:hover td { background:var(--cream); }
+    .badge { display:inline-block; font-size:10px; font-weight:600; padding:3px 10px; border-radius:100px; letter-spacing:.5px; }
+    .badge-green { background:var(--green-light); color:var(--green); }
+    .badge-amber { background:var(--amber-light); color:var(--amber); }
+    .badge-red { background:var(--red-light); color:var(--red); }
+    .mini-bar-track { height:6px; background:var(--blush); border-radius:100px; overflow:hidden; width:80px; display:inline-block; vertical-align:middle; margin-right:8px; }
+    .mini-bar-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--rose),var(--deep)); }
+
+    /* INSIGHT CALLOUT */
+    .insight { background:linear-gradient(135deg,var(--ink),#2d1a24); border-radius:20px; padding:36px 40px; display:flex; gap:24px; align-items:flex-start; }
+    .insight-icon { font-size:32px; flex-shrink:0; margin-top:2px; }
+    .insight-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--rose); font-weight:600; margin-bottom:8px; }
+    .insight-text { font-size:15px; line-height:1.75; color:rgba(255,255,255,.85); }
+    .insight-text strong { color:white; }
+
+    /* TARGET TRACKER */
+    .target-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .target-card { background:white; border:1px solid var(--border); border-radius:16px; padding:24px; }
+    .target-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); font-weight:500; margin-bottom:14px; }
+    .target-nums { display:flex; align-items:baseline; gap:8px; margin-bottom:12px; }
+    .target-actual { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--ink); }
+    .target-goal { font-size:14px; color:var(--muted); }
+    .target-track { height:8px; background:var(--blush); border-radius:100px; overflow:hidden; }
+    .target-fill { height:100%; border-radius:100px; }
+    .fill-green { background:linear-gradient(90deg,#81c784,var(--green)); }
+    .fill-rose { background:linear-gradient(90deg,var(--rose),var(--deep)); }
+    .fill-amber { background:linear-gradient(90deg,#ffd54f,var(--amber)); }
+    .target-status { font-size:12px; margin-top:10px; font-weight:600; }
+
+    footer { background:var(--ink); color:rgba(255,255,255,.4); text-align:center; padding:28px; font-size:12px; letter-spacing:1px; }
+    footer span { color:var(--rose); }
+
+    ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--cream)} ::-webkit-scrollbar-thumb{background:var(--rose);border-radius:10px}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="portfolio.html">Antoanela <span>Ciulei</span></a>
+  <div class="nav-right">
+    <span class="nav-badge">📊 Portfolio Project</span>
+    <a class="nav-back" href="portfolio.html">← Back to portfolio</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-top">
+    <div class="hero-text">
+      <div class="eyebrow">
+        <span class="eyebrow-tag">Sales Dashboard</span>
+        <span class="eyebrow-date">Fictional Case Study · Based on real retail experience</span>
+      </div>
+      <h1>Nova Fashion —<br><em>retail performance</em> overview.</h1>
+      <p class="hero-sub">A fictional KPI dashboard inspired by my real experience as Shift Leader & Sales Team Manager in fashion retail. All figures, team names, and brand details are illustrative — created to demonstrate data analysis and retail management skills.</p>
+    </div>
+    <div class="hero-context">
+      <div class="context-label">⚠️ Fictional case study</div>
+      <div class="context-row"><span>Role</span><strong>Shift Leader & Sales Manager</strong></div>
+      <div class="context-row"><span>Brand</span><strong>Nova Fashion (fictional)</strong></div>
+      <div class="context-row"><span>Team size</span><strong>5 people</strong></div>
+      <div class="context-row"><span>Period</span><strong>10-month simulation</strong></div>
+      <div class="context-row"><span>Data</span><strong>Illustrative figures only</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER TABS -->
+<div class="filters">
+  <button class="filter-btn active" onclick="setView('all', this)">Full period</button>
+  <button class="filter-btn" onclick="setView('peak', this)">Peak season (Nov–Dec)</button>
+  <button class="filter-btn" onclick="setView('slow', this)">Slow season (Jan–Feb)</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value" id="kpi-revenue">€284K</div>
+      <div class="kpi-sub kpi-up">↑ 14% vs prior period</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🛍️</div>
+      <div class="kpi-label">Avg. Daily Sales</div>
+      <div class="kpi-value" id="kpi-daily">€1,040</div>
+      <div class="kpi-sub kpi-neutral">Target: €1,000 / day</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🔄</div>
+      <div class="kpi-label">Conversion Rate</div>
+      <div class="kpi-value" id="kpi-conv">34%</div>
+      <div class="kpi-sub kpi-up">↑ 6pp after coaching</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🧾</div>
+      <div class="kpi-label">Avg. Basket Size</div>
+      <div class="kpi-value" id="kpi-basket">€47</div>
+      <div class="kpi-sub kpi-up">↑ €5 vs team start</div>
+    </div>
+  </div>
+
+  <!-- MONTHLY REVENUE + CATEGORY -->
+  <div class="charts-2col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Monthly Revenue</div>
+          <div class="chart-subtitle">Actual vs. target · Jun 2025 — Mar 2026</div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#c2185b"></div> Actual</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f8d7e3"></div> Target</div>
+        </div>
+      </div>
+      <canvas id="revenueChart" height="200"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Sales by Category</div>
+          <div class="chart-subtitle">Full period breakdown</div>
+        </div>
+      </div>
+      <canvas id="categoryChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- INSIGHT -->
+  <div class="insight">
+    <div class="insight-icon">💡</div>
+    <div>
+      <div class="insight-label">Manager's Insight</div>
+      <p class="insight-text">
+        <strong>December was our strongest month by far</strong> — revenue hit nearly 2.3× the January figure, driven by gifting season foot traffic and successful upselling of outerwear alongside tops. January saw a sharp drop as expected post-holiday, which we used as an opportunity to focus on team coaching, process improvement, and restocking routines. <strong>Tops consistently led category sales</strong> across every month — confirming they should anchor any promotional or visual merchandising strategy.
+      </p>
+    </div>
+  </div>
+
+  <!-- TARGET TRACKER -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Target Achievement</div>
+        <div class="chart-subtitle">Daily · Weekly · Monthly — full period averages</div>
+      </div>
+    </div>
+    <div class="target-grid">
+      <div class="target-card">
+        <div class="target-label">Daily Target</div>
+        <div class="target-nums">
+          <div class="target-actual">€1,040</div>
+          <div class="target-goal">/ €1,000 goal</div>
+        </div>
+        <div class="target-track"><div class="target-fill fill-green" style="width:104%"></div></div>
+        <div class="target-status" style="color:var(--green)">✓ 104% — consistently above target</div>
+      </div>
+      <div class="target-card">
+        <div class="target-label">Weekly Target</div>
+        <div class="target-nums">
+          <div class="target-actual">€7,100</div>
+          <div class="target-goal">/ €7,000 goal</div>
+        </div>
+        <div class="target-track"><div class="target-fill fill-green" style="width:101%"></div></div>
+        <div class="target-status" style="color:var(--green)">✓ 101% — met in 8 of 10 months</div>
+      </div>
+      <div class="target-card">
+        <div class="target-label">Monthly Target</div>
+        <div class="target-nums">
+          <div class="target-actual">€26,100</div>
+          <div class="target-goal">/ €28,000 goal</div>
+        </div>
+        <div class="target-track"><div class="target-fill fill-amber" style="width:93%"></div></div>
+        <div class="target-status" style="color:var(--amber)">~ 93% avg — dragged down by Jan & Feb slow season</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY TREND + DAILY HEATMAP -->
+  <div class="charts-2col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Weekly Sales Trend</div>
+          <div class="chart-subtitle">Average revenue by day of week</div>
+        </div>
+      </div>
+      <canvas id="weeklyChart" height="200"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Conversion by Month</div>
+          <div class="chart-subtitle">% of footfall that purchased</div>
+        </div>
+      </div>
+      <canvas id="convChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- TEAM PERFORMANCE -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Team Performance</div>
+        <div class="chart-subtitle">5-person team · individual contribution & conversion · full period</div>
+      </div>
+    </div>
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>Team Member</th>
+          <th>Units Sold</th>
+          <th>Revenue Share</th>
+          <th>Conversion</th>
+          <th>Avg. Basket</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A. Marinescu</strong></td>
+          <td>1,240</td>
+          <td><div class="mini-bar-track"><div class="mini-bar-fill" style="width:90%"></div></div>28%</td>
+          <td>41%</td>
+          <td>€52</td>
+          <td><span class="badge badge-green">Top performer</span></td>
+        </tr>
+        <tr>
+          <td><strong>I. Dobre</strong></td>
+          <td>1,080</td>
+          <td><div class="mini-bar-track"><div class="mini-bar-fill" style="width:78%"></div></div>24%</td>
+          <td>37%</td>
+          <td>€48</td>
+          <td><span class="badge badge-green">On target</span></td>
+        </tr>
+        <tr>
+          <td><strong>R. Constantin</strong></td>
+          <td>920</td>
+          <td><div class="mini-bar-track"><div class="mini-bar-fill" style="width:66%"></div></div>21%</td>
+          <td>33%</td>
+          <td>€45</td>
+          <td><span class="badge badge-amber">Improving</span></td>
+        </tr>
+        <tr>
+          <td><strong>M. Ionescu</strong></td>
+          <td>780</td>
+          <td><div class="mini-bar-track"><div class="mini-bar-fill" style="width:56%"></div></div>18%</td>
+          <td>29%</td>
+          <td>€43</td>
+          <td><span class="badge badge-amber">Needs coaching</span></td>
+        </tr>
+        <tr>
+          <td><strong>C. Popa</strong></td>
+          <td>380</td>
+          <td><div class="mini-bar-track"><div class="mini-bar-fill" style="width:28%"></div></div>9%</td>
+          <td>22%</td>
+          <td>€38</td>
+          <td><span class="badge badge-red">Below target</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CATEGORY BREAKDOWN -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Category Sales — Monthly Breakdown</div>
+        <div class="chart-subtitle">Tops · Outerwear · Bottoms · Accessories · Other</div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#c2185b"></div> Tops</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f48fb1"></div> Outerwear</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffd6e7"></div> Bottoms</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e8d5db"></div> Accessories</div>
+      </div>
+    </div>
+    <canvas id="stackedChart" height="120"></canvas>
+  </div>
+
+</div>
+
+<footer>
+  Sales Performance Dashboard · <span>Antoanela Ciulei</span> · Nova Fashion (fictional case study) · Illustrative data only
+</footer>
+
+<script>
+  const months = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+
+  // Revenue data — Dec spike, Jan/Feb dip
+  const actual =  [24800, 26200, 25400, 27100, 28900, 34200, 48600, 18200, 19800, 30800];
+  const target =  [24000, 25000, 25000, 26000, 28000, 32000, 42000, 22000, 22000, 28000];
+
+  // Category data
+  const tops      = [9500,10200,9800,10400,11200,13800,19400,7200,7800,12100];
+  const outerwear = [4200,4100,4000,5100,6800,10200,16200,3800,4100,6800];
+  const bottoms   = [5800,6400,6200,6500,5900,5800,7400,3900,4300,6300];
+  const accessories=[5300,5500,5400,5100,5000,4400,5600,3300,3600,5600];
+
+  const pink = '#c2185b', rose = '#f48fb1', blush = '#ffd6e7', light = '#e8d5db';
+
+  const defaults = {
+    font: { family: 'DM Sans' },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' €' + ctx.raw.toLocaleString() } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#7a6070' } },
+      y: { grid: { color: '#f8d7e3' }, ticks: { font: { size: 11 }, color: '#7a6070', callback: v => '€' + (v/1000).toFixed(0) + 'K' } }
+    }
+  };
+
+  // Revenue chart
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Target', data: target, backgroundColor: '#fce4ec', borderRadius: 6, order: 2 },
+        { label: 'Actual', data: actual, backgroundColor: months.map((m,i) => actual[i] >= target[i] ? pink : '#f48fb1'), borderRadius: 6, order: 1 }
+      ]
+    },
+    options: { ...defaults, responsive: true, plugins: { ...defaults.plugins, tooltip: { callbacks: { label: ctx => ' €' + ctx.raw.toLocaleString() } } } }
+  });
+
+  // Category donut
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Tops','Outerwear','Bottoms','Accessories'],
+      datasets: [{ data: [38, 27, 21, 14], backgroundColor: [pink, rose, blush, light], borderWidth: 0, hoverOffset: 8 }]
+    },
+    options: {
+      responsive: true, cutout: '68%',
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { font: { size: 12 }, color: '#7a6070', padding: 16 } },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw + '%' } }
+      }
+    }
+  });
+
+  // Weekly pattern
+  new Chart(document.getElementById('weeklyChart'), {
+    type: 'line',
+    data: {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets: [{
+        data: [820, 870, 890, 940, 1180, 1640, 1380],
+        borderColor: pink, backgroundColor: 'rgba(194,24,91,0.08)',
+        fill: true, tension: 0.4, pointBackgroundColor: pink, pointRadius: 5
+      }]
+    },
+    options: { ...defaults, responsive: true }
+  });
+
+  // Conversion chart
+  new Chart(document.getElementById('convChart'), {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [{
+        data: [28, 29, 30, 31, 33, 37, 42, 26, 27, 34],
+        borderColor: rose, backgroundColor: 'rgba(244,143,177,0.1)',
+        fill: true, tension: 0.4, pointBackgroundColor: rose, pointRadius: 5
+      }]
+    },
+    options: {
+      ...defaults, responsive: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.raw + '%' } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#7a6070' } },
+        y: { grid: { color: '#f8d7e3' }, ticks: { font: { size: 11 }, color: '#7a6070', callback: v => v + '%' }, min: 20, max: 50 }
+      }
+    }
+  });
+
+  // Stacked category
+  new Chart(document.getElementById('stackedChart'), {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Tops',       data: tops,       backgroundColor: pink,  borderRadius: 0 },
+        { label: 'Outerwear',  data: outerwear,  backgroundColor: rose,  borderRadius: 0 },
+        { label: 'Bottoms',    data: bottoms,    backgroundColor: blush, borderRadius: 0 },
+        { label: 'Accessories',data: accessories,backgroundColor: light, borderRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 12 }, color: '#7a6070' } },
+        y: { stacked: true, grid: { color: '#f8d7e3' }, ticks: { font: { size: 11 }, color: '#7a6070', callback: v => '€' + (v/1000).toFixed(0) + 'K' } }
+      },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': €' + ctx.raw.toLocaleString() } } }
+    }
+  });
+
+  // Filter tabs
+  const peakIdx = [4,5,6]; const slowIdx = [7,8];
+  function setView(view, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const filter = view === 'peak' ? peakIdx : view === 'slow' ? slowIdx : null;
+    const labels = filter ? months.filter((_,i) => filter.includes(i)) : months;
+    const filterData = (arr) => filter ? arr.filter((_,i) => filter.includes(i)) : arr;
+
+    // update KPIs
+    const rev = filterData(actual).reduce((a,b)=>a+b,0);
+    document.getElementById('kpi-revenue').textContent = '€' + (rev/1000).toFixed(0) + 'K';
+    const avgDaily = Math.round(rev / (filter ? filter.length * 26 : 270));
+    document.getElementById('kpi-daily').textContent = '€' + avgDaily.toLocaleString();
+    const convData = [28,29,30,31,33,37,42,26,27,34];
+    const avgConv = Math.round(filterData(convData).reduce((a,b)=>a+b,0) / (filter ? filter.length : months.length));
+    document.getElementById('kpi-conv').textContent = avgConv + '%';
+  }
+</script>
+</body>
+</html>

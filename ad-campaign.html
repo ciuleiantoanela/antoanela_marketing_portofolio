@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ad Campaign Simulation — Nova Fashion · Antoanela Ciulei</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --blush:#fce4ec; --rose:#f48fb1; --deep:#c2185b;
+      --ink:#1a1218; --muted:#7a6070; --cream:#fff8f9;
+      --border:#f8d7e3; --shadow:rgba(194,24,91,0.10);
+      --white:#ffffff;
+      --green:#43a047; --green-light:#e8f5e9;
+      --amber:#f9a825; --amber-light:#fffde7;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;background:rgba(255,248,249,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .nav-logo{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);text-decoration:none}
+    .nav-logo span{color:var(--deep);font-style:italic}
+    .nav-right{display:flex;align-items:center;gap:16px}
+    .nav-badge{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--deep);background:var(--blush);border:1px solid var(--border);padding:4px 12px;border-radius:100px;font-weight:600}
+    .nav-back{font-size:12px;color:var(--deep);text-decoration:none;display:flex;align-items:center;gap:6px;font-weight:500;transition:gap .2s}
+    .nav-back:hover{gap:10px}
+
+    /* HERO */
+    .hero{max-width:980px;margin:0 auto;padding:64px 48px 48px;position:relative;z-index:1}
+    .eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+    .eyebrow-tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--deep);font-weight:600;background:var(--blush);padding:5px 14px;border-radius:100px;border:1px solid var(--border)}
+    .eyebrow-note{font-size:12px;color:var(--muted)}
+    h1{font-family:'Playfair Display',serif;font-size:46px;font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:20px}
+    h1 em{color:var(--deep);font-style:italic}
+    .hero-sub{font-size:16px;line-height:1.8;color:var(--muted);max-width:640px;margin-bottom:36px}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:10px}
+    .pill{font-size:12px;font-weight:500;padding:6px 16px;border-radius:100px;background:white;border:1px solid var(--border);color:var(--muted)}
+    .pill strong{color:var(--deep)}
+
+    /* LAYOUT */
+    .content{max-width:980px;margin:0 auto;padding:0 48px 100px;position:relative;z-index:1;display:flex;flex-direction:column;gap:52px}
+    .section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--deep);font-weight:600;margin-bottom:8px}
+    .section-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:24px}
+    .section-title em{color:var(--deep);font-style:italic}
+    .prose{font-size:15px;line-height:1.85;color:var(--muted);margin-bottom:16px;max-width:700px}
+    .card{background:white;border:1px solid var(--border);border-radius:20px;padding:32px}
+
+    /* COLLECTION CONCEPT */
+    .collection-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:8px}
+    .colour-card{border-radius:18px;overflow:hidden;border:1px solid var(--border);background:white;transition:transform .25s,box-shadow .25s;cursor:default}
+    .colour-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px var(--shadow)}
+    .colour-swatch{height:140px;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative}
+    .swatch-oat{background:linear-gradient(145deg,#f5f0e8,#ede8dc)}
+    .swatch-slate{background:linear-gradient(145deg,#dde3ec,#c8d2e0)}
+    .swatch-stone{background:linear-gradient(145deg,#e8e4df,#d8d2ca)}
+    .swatch-rose{background:linear-gradient(145deg,#f0e4e8,#e4d0d8)}
+    .colour-body{padding:16px}
+    .colour-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .colour-vibe{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:10px}
+    .badge-list{display:flex;flex-direction:column;gap:5px}
+    .badge-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+    .badge-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+    /* CAMPAIGN CONCEPT */
+    .concept-box{background:linear-gradient(135deg,var(--ink),#2d1a24);border-radius:24px;padding:48px;position:relative;overflow:hidden}
+    .concept-box::before{content:'"';position:absolute;top:-30px;right:40px;font-family:'Playfair Display',serif;font-size:200px;color:var(--deep);opacity:.2;line-height:1}
+    .concept-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:16px}
+    .concept-name{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:white;margin-bottom:16px;position:relative;z-index:1}
+    .concept-name em{color:var(--rose);font-style:italic}
+    .concept-desc{font-size:16px;line-height:1.8;color:rgba(255,255,255,.8);max-width:580px;position:relative;z-index:1}
+    .concept-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;position:relative;z-index:1}
+    .concept-tag{font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid rgba(244,143,177,.4);color:var(--rose);font-weight:500}
+
+    /* AD MOCKUPS */
+    .ads-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+    .ad-mockup{border-radius:20px;overflow:hidden;border:1px solid var(--border);background:white;transition:transform .2s,box-shadow .2s}
+    .ad-mockup:hover{transform:translateY(-5px);box-shadow:0 16px 40px var(--shadow)}
+    .ad-platform{padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--cream)}
+    .ad-platform-icon{font-size:16px}
+    .ad-platform-name{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600}
+    .ad-platform-format{margin-left:auto;font-size:10px;color:var(--rose);font-weight:500}
+    .ad-visual{height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative;padding:20px}
+    .ad-visual-1{background:linear-gradient(145deg,#f5f0e8,#ede8dc)}
+    .ad-visual-2{background:linear-gradient(145deg,#dde3ec,#c8d2e0)}
+    .ad-visual-3{background:linear-gradient(145deg,#1a1218,#2d1a24)}
+    .ad-headline{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;text-align:center;line-height:1.3}
+    .ad-headline-dark{color:var(--ink)}
+    .ad-headline-light{color:white}
+    .ad-sub-text{font-size:11px;text-align:center;line-height:1.5;opacity:.8}
+    .ad-sub-dark{color:var(--muted)}
+    .ad-sub-light{color:rgba(255,255,255,.7)}
+    .ad-badges-preview{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+    .ad-badge{font-size:10px;padding:3px 10px;border-radius:100px;font-weight:600}
+    .ad-badge-dark{background:rgba(194,24,91,.15);color:var(--deep)}
+    .ad-badge-light{background:rgba(244,143,177,.2);color:var(--rose)}
+    .ad-body{padding:16px}
+    .ad-copy{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+    .ad-cta{display:inline-block;font-size:12px;font-weight:600;padding:8px 18px;border-radius:100px;background:var(--deep);color:white;text-decoration:none}
+    .ad-target{font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+    .ad-target strong{color:var(--deep)}
+
+    /* AUDIENCE TARGETING */
+    .targeting-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .targeting-card{background:white;border:1px solid var(--border);border-radius:16px;padding:24px}
+    .targeting-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .targeting-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+    .targeting-row:last-child{border-bottom:none}
+    .targeting-key{color:var(--muted)}
+    .targeting-val{font-weight:600;color:var(--ink);text-align:right;max-width:220px}
+
+    /* BUDGET */
+    .budget-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .budget-card{background:white;border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;overflow:hidden;text-align:center}
+    .budget-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rose),var(--deep))}
+    .budget-amount{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--deep);margin-bottom:4px}
+    .budget-label{font-size:12px;color:var(--muted)}
+    .budget-sub{font-size:11px;color:var(--rose);font-weight:600;margin-top:4px}
+
+    /* PROJECTED RESULTS */
+    .results-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .result-card{background:white;border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;overflow:hidden}
+    .result-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rose),var(--deep))}
+    .result-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px var(--shadow);transition:all .2s}
+    .result-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--deep);line-height:1}
+    .result-label{font-size:12px;color:var(--muted);margin-top:6px}
+    .result-note{font-size:11px;color:var(--green);font-weight:600;margin-top:6px}
+
+    /* CHARTS ROW */
+    .charts-row{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+    .chart-card{background:white;border:1px solid var(--border);border-radius:20px;padding:28px}
+    .chart-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .chart-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+
+    /* FUNNEL */
+    .funnel{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+    .funnel-step{display:flex;align-items:center;gap:16px}
+    .funnel-bar-wrap{flex:1}
+    .funnel-label{font-size:13px;color:var(--ink);width:110px;flex-shrink:0}
+    .funnel-track{height:32px;background:var(--blush);border-radius:8px;overflow:hidden}
+    .funnel-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--rose),var(--deep));display:flex;align-items:center;padding-left:12px;font-size:12px;font-weight:600;color:white;white-space:nowrap;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+
+    /* CREATIVE RATIONALE */
+    .rationale-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .rationale-card{background:white;border:1px solid var(--border);border-radius:16px;padding:22px;transition:box-shadow .2s}
+    .rationale-card:hover{box-shadow:0 8px 24px var(--shadow)}
+    .rationale-icon{font-size:26px;margin-bottom:12px}
+    .rationale-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px}
+    .rationale-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+    footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;padding:28px;font-size:12px;letter-spacing:1px}
+    footer span{color:var(--rose)}
+    .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--cream)}::-webkit-scrollbar-thumb{background:var(--rose);border-radius:10px}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="portfolio.html">Antoanela <span>Ciulei</span></a>
+  <div class="nav-right">
+    <span class="nav-badge">📈 Portfolio Project</span>
+    <a class="nav-back" href="portfolio.html">← Back to portfolio</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero fade-in visible">
+  <div class="eyebrow">
+    <span class="eyebrow-tag">Ad Campaign Simulation</span>
+    <span class="eyebrow-note">Fictional case study · Nova Fashion · 2025</span>
+  </div>
+  <h1><em>"Dress Your Story"</em> —<br>a collection launch campaign.</h1>
+  <p class="hero-sub">
+    A simulated paid advertising campaign for the launch of Nova Fashion's
+    <em>Neutral Grounds</em> collection — corporate clothing in neutral tones,
+    each colour paired with personality badges, making workwear feel personal,
+    customisable, and entirely yours.
+  </p>
+  <div class="hero-pills">
+    <div class="pill"><strong>Brand:</strong> Nova Fashion (fictional)</div>
+    <div class="pill"><strong>Campaign:</strong> Dress Your Story</div>
+    <div class="pill"><strong>Collection:</strong> Neutral Grounds</div>
+    <div class="pill"><strong>Audience:</strong> Women 28–45, Romania</div>
+    <div class="pill"><strong>Budget:</strong> €6,000</div>
+    <div class="pill"><strong>Duration:</strong> 4 weeks</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- COLLECTION CONCEPT -->
+  <div class="fade-in">
+    <div class="section-label">01 — The Collection</div>
+    <h2 class="section-title">Neutral Grounds — <em>wear your personality.</em></h2>
+    <p class="prose">Four neutral colourways. Each one comes with a set of personality badges — small, elegant accessories that clip onto lapels, cuffs, or collars. The clothes are workwear-ready. The badges make them yours. It's the same blazer. It's never the same outfit.</p>
+
+    <div class="collection-grid">
+      <div class="colour-card">
+        <div class="colour-swatch swatch-oat">🌾</div>
+        <div class="colour-body">
+          <div class="colour-name">Oat</div>
+          <div class="colour-vibe">The Optimist</div>
+          <div class="badge-list">
+            <div class="badge-item"><div class="badge-dot" style="background:#c8a97e"></div>Warm & approachable</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#c8a97e"></div>Badges: sun, daisy, smile</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#c8a97e"></div>Pairs with: gold jewellery</div>
+          </div>
+        </div>
+      </div>
+      <div class="colour-card">
+        <div class="colour-swatch swatch-slate">🌊</div>
+        <div class="colour-body">
+          <div class="colour-name">Slate</div>
+          <div class="colour-vibe">The Strategist</div>
+          <div class="badge-list">
+            <div class="badge-item"><div class="badge-dot" style="background:#8fa8c8"></div>Calm & authoritative</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#8fa8c8"></div>Badges: compass, star, key</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#8fa8c8"></div>Pairs with: silver details</div>
+          </div>
+        </div>
+      </div>
+      <div class="colour-card">
+        <div class="colour-swatch swatch-stone">🪨</div>
+        <div class="colour-body">
+          <div class="colour-name">Stone</div>
+          <div class="colour-vibe">The Realist</div>
+          <div class="badge-list">
+            <div class="badge-item"><div class="badge-dot" style="background:#a89e94"></div>Grounded & reliable</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#a89e94"></div>Badges: mountain, leaf, anchor</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#a89e94"></div>Pairs with: earth tones</div>
+          </div>
+        </div>
+      </div>
+      <div class="colour-card">
+        <div class="colour-swatch swatch-rose">🌸</div>
+        <div class="colour-body">
+          <div class="colour-name">Blush Rose</div>
+          <div class="colour-vibe">The Visionary</div>
+          <div class="badge-list">
+            <div class="badge-item"><div class="badge-dot" style="background:#c2849a"></div>Creative & bold</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#c2849a"></div>Badges: moon, pen, crown</div>
+            <div class="badge-item"><div class="badge-dot" style="background:#c2849a"></div>Pairs with: rose gold</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMPAIGN CONCEPT -->
+  <div class="concept-box fade-in">
+    <div class="concept-label">Campaign Concept</div>
+    <div class="concept-name">"Dress Your <em>Story.</em>"</div>
+    <p class="concept-desc">
+      Every woman walks into work wearing something. Not every woman gets to say who she is
+      while doing it. <em>Neutral Grounds</em> gives her the canvas — classic, polished,
+      work-appropriate. The badges give her the voice. The campaign asks one simple question
+      to stop the scroll: <strong style="color:white">"Which one are you?"</strong>
+    </p>
+    <div class="concept-tags">
+      <span class="concept-tag">Customisable workwear</span>
+      <span class="concept-tag">Personality-driven</span>
+      <span class="concept-tag">Inclusive sizing</span>
+      <span class="concept-tag">Romanian-made</span>
+      <span class="concept-tag">Corporate elegant</span>
+    </div>
+  </div>
+
+  <!-- AD MOCKUPS -->
+  <div class="fade-in">
+    <div class="section-label">02 — Ad Creatives</div>
+    <h2 class="section-title">What the ads <em>look like.</em></h2>
+    <p class="prose">Three ad formats across two platforms, each tailored to where the audience is and what they're doing when they see it. The creative hook is always the same: a question that makes her stop and think about herself.</p>
+
+    <div class="ads-grid">
+
+      <div class="ad-mockup">
+        <div class="ad-platform">
+          <span class="ad-platform-icon">📸</span>
+          <span class="ad-platform-name">Instagram</span>
+          <span class="ad-platform-format">Feed Image</span>
+        </div>
+        <div class="ad-visual ad-visual-1">
+          <div class="ad-headline ad-headline-dark">Are you the Optimist<br>or the Strategist?</div>
+          <div class="ad-badges-preview">
+            <span class="ad-badge ad-badge-dark">🌾 Oat · Optimist</span>
+            <span class="ad-badge ad-badge-dark">🌊 Slate · Strategist</span>
+          </div>
+          <div class="ad-sub-text ad-sub-dark" style="margin-top:6px">Neutral Grounds Collection — Nova Fashion</div>
+        </div>
+        <div class="ad-body">
+          <div class="ad-copy">A split-image showing two women, same blazer silhouette, different colourways and badges. Minimal text. The contrast does the work.</div>
+          <div class="ad-cta">Shop the collection</div>
+          <div class="ad-target">🎯 <strong>Women 28–42</strong> · Bucharest, Cluj, Timișoara · Interests: fashion, career, lifestyle</div>
+        </div>
+      </div>
+
+      <div class="ad-mockup">
+        <div class="ad-platform">
+          <span class="ad-platform-icon">📘</span>
+          <span class="ad-platform-name">Meta (Facebook)</span>
+          <span class="ad-platform-format">Carousel</span>
+        </div>
+        <div class="ad-visual ad-visual-2">
+          <div class="ad-headline ad-headline-dark">One blazer.<br>Four personalities.</div>
+          <div class="ad-badges-preview">
+            <span class="ad-badge ad-badge-dark">🌾 Oat</span>
+            <span class="ad-badge ad-badge-dark">🌊 Slate</span>
+            <span class="ad-badge ad-badge-dark">🪨 Stone</span>
+            <span class="ad-badge ad-badge-dark">🌸 Rose</span>
+          </div>
+          <div class="ad-sub-text ad-sub-dark" style="margin-top:6px">Swipe to find yours →</div>
+        </div>
+        <div class="ad-body">
+          <div class="ad-copy">4 carousel cards — one per colourway. Each card shows the colour, the personality name, and the badge set. Final card: "Which one are you? Shop now."</div>
+          <div class="ad-cta">Swipe & discover yours</div>
+          <div class="ad-target">🎯 <strong>Women 32–45</strong> · Lookalike from website visitors · Retargeting warm audience</div>
+        </div>
+      </div>
+
+      <div class="ad-mockup">
+        <div class="ad-platform">
+          <span class="ad-platform-icon">🎵</span>
+          <span class="ad-platform-name">TikTok</span>
+          <span class="ad-platform-format">Short Video</span>
+        </div>
+        <div class="ad-visual ad-visual-3">
+          <div class="ad-headline ad-headline-light">POV: you just found<br>your work personality.</div>
+          <div class="ad-badges-preview">
+            <span class="ad-badge ad-badge-light">✨ 15 seconds</span>
+            <span class="ad-badge ad-badge-light">🎬 Trending audio</span>
+          </div>
+          <div class="ad-sub-text ad-sub-light" style="margin-top:6px">Dress Your Story · Nova Fashion</div>
+        </div>
+        <div class="ad-body">
+          <div class="ad-copy">15-second video: woman at her desk, pins on a badge, straightens up, walks into a meeting. Text overlay: "Same blazer. Different story." CTA: "Find yours."</div>
+          <div class="ad-cta">Find your colour →</div>
+          <div class="ad-target">🎯 <strong>Women 25–38</strong> · Interests: fashion, career, self-development · Awareness objective</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CREATIVE RATIONALE -->
+  <div class="fade-in">
+    <div class="section-label">03 — Creative Rationale</div>
+    <h2 class="section-title">Why this creative <em>works.</em></h2>
+    <div class="rationale-grid">
+      <div class="rationale-card">
+        <div class="rationale-icon">🛑</div>
+        <div class="rationale-title">The scroll-stop hook</div>
+        <div class="rationale-desc">"Which one are you?" is a personality question, not a product question. It triggers self-identification — the most powerful reason to stop scrolling. The audience isn't looking at a blazer; she's looking at herself.</div>
+      </div>
+      <div class="rationale-card">
+        <div class="rationale-icon">🎨</div>
+        <div class="rationale-title">Neutral palette = broad appeal</div>
+        <div class="rationale-desc">Neutral colours photograph cleanly, feel premium, and work across all skin tones. They don't polarise — but the badges add personality without risk, making the purchase feel safe and expressive at the same time.</div>
+      </div>
+      <div class="rationale-card">
+        <div class="rationale-icon">💼</div>
+        <div class="rationale-title">Work-friendly = lower barrier</div>
+        <div class="rationale-desc">The 28–45 audience needs to justify purchases to themselves. "I can wear this to work" removes the hesitation. It's not an indulgence — it's an investment. The campaign language reflects this without being corporate.</div>
+      </div>
+      <div class="rationale-card">
+        <div class="rationale-icon">🏅</div>
+        <div class="rationale-title">Badges = shareable moment</div>
+        <div class="rationale-desc">The personality badge concept gives buyers something to talk about. "I'm the Strategist" is a social statement. It invites organic sharing, tagging friends, and user-generated content — free reach beyond the paid budget.</div>
+      </div>
+      <div class="rationale-card">
+        <div class="rationale-icon">📐</div>
+        <div class="rationale-title">Inclusive by default</div>
+        <div class="rationale-desc">The campaign visuals show women of different ages, builds, and backgrounds — not as a diversity checkbox but as the natural representation of who actually buys this. It signals to the audience: this brand sees you.</div>
+      </div>
+      <div class="rationale-card">
+        <div class="rationale-icon">🇷🇴</div>
+        <div class="rationale-title">Local pride angle</div>
+        <div class="rationale-desc">Romanian women are increasingly drawn to supporting local brands — especially when quality is comparable to international competitors. "Romanian-made, worn your way" is a secondary message that builds brand loyalty early.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TARGETING -->
+  <div class="fade-in">
+    <div class="section-label">04 — Audience Targeting</div>
+    <h2 class="section-title">Who sees the <em>ads.</em></h2>
+    <div class="targeting-grid">
+      <div class="targeting-card">
+        <div class="targeting-title">🎯 Primary Audience — Meta</div>
+        <div class="targeting-row"><span class="targeting-key">Age</span><span class="targeting-val">28–45</span></div>
+        <div class="targeting-row"><span class="targeting-key">Gender</span><span class="targeting-val">Women</span></div>
+        <div class="targeting-row"><span class="targeting-key">Location</span><span class="targeting-val">Bucharest, Cluj-Napoca, Timișoara, Iași</span></div>
+        <div class="targeting-row"><span class="targeting-key">Interests</span><span class="targeting-val">Fashion, career growth, lifestyle, local brands</span></div>
+        <div class="targeting-row"><span class="targeting-key">Behaviour</span><span class="targeting-val">Online shoppers, engaged with fashion content</span></div>
+        <div class="targeting-row"><span class="targeting-key">Objective</span><span class="targeting-val">Conversions — Add to cart & purchase</span></div>
+      </div>
+      <div class="targeting-card">
+        <div class="targeting-title">🔁 Retargeting Audience — Meta</div>
+        <div class="targeting-row"><span class="targeting-key">Who</span><span class="targeting-val">Website visitors (last 30 days)</span></div>
+        <div class="targeting-row"><span class="targeting-key">Also</span><span class="targeting-val">Lookalike audience from email list</span></div>
+        <div class="targeting-row"><span class="targeting-key">Format</span><span class="targeting-val">Carousel — all 4 colourways</span></div>
+        <div class="targeting-row"><span class="targeting-key">Message</span><span class="targeting-val">"Still thinking? She found her colour."</span></div>
+        <div class="targeting-row"><span class="targeting-key">Objective</span><span class="targeting-val">Purchase — abandoned cart recovery</span></div>
+        <div class="targeting-row"><span class="targeting-key">Budget share</span><span class="targeting-val">30% of Meta spend</span></div>
+      </div>
+      <div class="targeting-card">
+        <div class="targeting-title">🎵 TikTok Audience</div>
+        <div class="targeting-row"><span class="targeting-key">Age</span><span class="targeting-val">25–38 (awareness focus)</span></div>
+        <div class="targeting-row"><span class="targeting-key">Interests</span><span class="targeting-val">Fashion, #ootd, career, self-development</span></div>
+        <div class="targeting-row"><span class="targeting-key">Format</span><span class="targeting-val">In-feed video, 15 seconds</span></div>
+        <div class="targeting-row"><span class="targeting-key">Objective</span><span class="targeting-val">Brand awareness & website traffic</span></div>
+        <div class="targeting-row"><span class="targeting-key">Note</span><span class="targeting-val">Secondary channel — awareness only, not conversion</span></div>
+        <div class="targeting-row"><span class="targeting-key">Budget share</span><span class="targeting-val">20% of total budget</span></div>
+      </div>
+      <div class="targeting-card">
+        <div class="targeting-title">📸 Instagram Audience</div>
+        <div class="targeting-row"><span class="targeting-key">Age</span><span class="targeting-val">28–42</span></div>
+        <div class="targeting-row"><span class="targeting-key">Format</span><span class="targeting-val">Feed image + Stories</span></div>
+        <div class="targeting-row"><span class="targeting-key">Interests</span><span class="targeting-val">Workwear, styling, Romanian brands</span></div>
+        <div class="targeting-row"><span class="targeting-key">Objective</span><span class="targeting-val">Traffic to collection page</span></div>
+        <div class="targeting-row"><span class="targeting-key">Creative</span><span class="targeting-val">Split-image: two personalities side by side</span></div>
+        <div class="targeting-row"><span class="targeting-key">Budget share</span><span class="targeting-val">30% of total budget</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUDGET -->
+  <div class="fade-in">
+    <div class="section-label">05 — Budget Allocation</div>
+    <h2 class="section-title">€6,000 across <em>4 weeks.</em></h2>
+    <div class="budget-row">
+      <div class="budget-card">
+        <div class="budget-amount">€2,400</div>
+        <div class="budget-label">Meta Ads (Facebook + Instagram)</div>
+        <div class="budget-sub">40% · Primary conversion channel</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€1,800</div>
+        <div class="budget-label">Instagram Feed & Stories</div>
+        <div class="budget-sub">30% · Brand building & traffic</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€1,200</div>
+        <div class="budget-label">TikTok In-Feed Video</div>
+        <div class="budget-sub">20% · Awareness & reach</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€360</div>
+        <div class="budget-label">Creative Production</div>
+        <div class="budget-sub">6% · Photography & video edit</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€240</div>
+        <div class="budget-label">Contingency</div>
+        <div class="budget-sub">4% · Scaling top performers</div>
+      </div>
+      <div class="budget-card" style="background:var(--blush);">
+        <div class="budget-amount">€6,000</div>
+        <div class="budget-label">Total campaign budget</div>
+        <div class="budget-sub">4-week simulation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTED RESULTS -->
+  <div class="fade-in">
+    <div class="section-label">06 — Projected Results</div>
+    <h2 class="section-title">What we expect to <em>achieve.</em></h2>
+
+    <div class="results-grid" style="margin-bottom:20px">
+      <div class="result-card">
+        <div class="result-num">186K</div>
+        <div class="result-label">Total impressions</div>
+        <div class="result-note">↑ Across all platforms</div>
+      </div>
+      <div class="result-card">
+        <div class="result-num">2.8%</div>
+        <div class="result-label">Avg. click-through rate</div>
+        <div class="result-note">↑ vs 1.9% industry avg</div>
+      </div>
+      <div class="result-card">
+        <div class="result-num">2.7×</div>
+        <div class="result-label">Projected ROAS</div>
+        <div class="result-note">↑ €16,200 revenue on €6K spend</div>
+      </div>
+      <div class="result-card">
+        <div class="result-num">€28</div>
+        <div class="result-label">Cost per acquisition</div>
+        <div class="result-note">↓ Below €35 fashion benchmark</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Weekly spend vs. projected revenue</div>
+        <div class="chart-sub">Ramp-up in week 1, optimise weeks 2–3, scale week 4</div>
+        <canvas id="spendChart" height="180"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Conversion funnel</div>
+        <div class="chart-sub">From impression to purchase</div>
+        <div class="funnel" id="funnel">
+          <div class="funnel-step">
+            <div class="funnel-label">Impressions</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-track"><div class="funnel-fill" data-w="100">186,000</div></div>
+            </div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">Clicks</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-track"><div class="funnel-fill" data-w="70">5,208</div></div>
+            </div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">Product views</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-track"><div class="funnel-fill" data-w="48">3,540</div></div>
+            </div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">Add to cart</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-track"><div class="funnel-fill" data-w="28">1,062</div></div>
+            </div>
+          </div>
+          <div class="funnel-step">
+            <div class="funnel-label">Purchases</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-track"><div class="funnel-fill" data-w="14">214</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Ad Campaign Simulation · <span>Antoanela Ciulei</span> · Nova Fashion (fictional case study) · 2025
+</footer>
+
+<script>
+  // Fade in
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  fadeEls.forEach(el => obs.observe(el));
+
+  // Funnel bars
+  const fills = document.querySelectorAll('.funnel-fill');
+  const funnelObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) e.target.style.width = e.target.dataset.w + '%';
+    });
+  }, { threshold: 0.3 });
+  fills.forEach(f => funnelObs.observe(f));
+
+  // Spend vs revenue chart
+  new Chart(document.getElementById('spendChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Week 1','Week 2','Week 3','Week 4'],
+      datasets: [
+        {
+          label: 'Ad Spend',
+          data: [1200, 1400, 1600, 1800],
+          backgroundColor: '#fce4ec',
+          borderRadius: 8, order: 2
+        },
+        {
+          label: 'Projected Revenue',
+          data: [2800, 3600, 4400, 5400],
+          backgroundColor: '#c2185b',
+          borderRadius: 8, order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { font: { size: 12 }, color: '#7a6070', padding: 16 } },
+        tooltip: { callbacks: { label: ctx => ' €' + ctx.raw.toLocaleString() } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#7a6070' } },
+        y: { grid: { color: '#f8d7e3' }, ticks: { font: { size: 11 }, color: '#7a6070', callback: v => '€' + (v/1000).toFixed(1) + 'K' } }
+      }
+    }
+  });
+</script>
+</body>
+</html>

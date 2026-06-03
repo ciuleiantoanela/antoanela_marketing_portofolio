@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nova Fashion — Online Store Launch Strategy · Antoanela Ciulei</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blush: #fce4ec; --rose: #f48fb1; --deep: #c2185b;
+      --ink: #1a1218; --muted: #7a6070; --cream: #fff8f9;
+      --border: #f8d7e3; --shadow: rgba(194,24,91,0.10);
+      --white: #ffffff;
+      --green: #43a047; --green-light: #e8f5e9;
+      --amber: #f9a825; --amber-light: #fffde7;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+
+    body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:.4; }
+
+    /* NAV */
+    nav { position:sticky; top:0; z-index:100; background:rgba(255,248,249,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 48px; display:flex; align-items:center; justify-content:space-between; height:60px; }
+    .nav-logo { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:var(--ink); text-decoration:none; }
+    .nav-logo span { color:var(--deep); font-style:italic; }
+    .nav-right { display:flex; align-items:center; gap:16px; }
+    .nav-badge { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--deep); background:var(--blush); border:1px solid var(--border); padding:4px 12px; border-radius:100px; font-weight:600; }
+    .nav-back { font-size:12px; color:var(--deep); text-decoration:none; display:flex; align-items:center; gap:6px; font-weight:500; transition:gap .2s; }
+    .nav-back:hover { gap:10px; }
+
+    /* HERO */
+    .hero { max-width:960px; margin:0 auto; padding:64px 48px 48px; position:relative; z-index:1; }
+    .eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+    .eyebrow-tag { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--deep); font-weight:600; background:var(--blush); padding:5px 14px; border-radius:100px; border:1px solid var(--border); }
+    .eyebrow-note { font-size:12px; color:var(--muted); }
+    h1 { font-family:'Playfair Display',serif; font-size:48px; font-weight:700; line-height:1.1; color:var(--ink); margin-bottom:20px; }
+    h1 em { color:var(--deep); font-style:italic; }
+    .hero-sub { font-size:16px; line-height:1.8; color:var(--muted); max-width:640px; margin-bottom:40px; }
+    .hero-pills { display:flex; flex-wrap:wrap; gap:10px; }
+    .pill { font-size:12px; font-weight:500; padding:6px 16px; border-radius:100px; background:white; border:1px solid var(--border); color:var(--muted); }
+    .pill strong { color:var(--deep); }
+
+    /* CONTENT */
+    .content { max-width:960px; margin:0 auto; padding:0 48px 100px; position:relative; z-index:1; display:flex; flex-direction:column; gap:48px; }
+
+    /* SECTION */
+    .section-label { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--deep); font-weight:600; margin-bottom:8px; }
+    .section-title { font-family:'Playfair Display',serif; font-size:30px; font-weight:700; line-height:1.2; color:var(--ink); margin-bottom:24px; }
+    .section-title em { color:var(--deep); font-style:italic; }
+    .prose { font-size:15px; line-height:1.85; color:var(--muted); margin-bottom:16px; max-width:700px; }
+
+    /* CARDS */
+    .card { background:white; border:1px solid var(--border); border-radius:20px; padding:32px; }
+    .card-sm { background:white; border:1px solid var(--border); border-radius:16px; padding:24px; }
+
+    /* SITUATION */
+    .situation-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .situation-card { border-radius:16px; padding:24px; }
+    .sit-opportunity { background:var(--green-light); border:1px solid #c8e6c9; }
+    .sit-challenge { background:var(--blush); border:1px solid var(--border); }
+    .sit-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin-bottom:12px; }
+    .sit-opportunity .sit-label { color:var(--green); }
+    .sit-challenge .sit-label { color:var(--deep); }
+    .sit-item { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; font-size:14px; line-height:1.6; color:var(--ink); }
+    .sit-item:last-child { margin-bottom:0; }
+    .sit-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:7px; }
+    .sit-opportunity .sit-dot { background:var(--green); }
+    .sit-challenge .sit-dot { background:var(--deep); }
+
+    /* INSIDER CALLOUT */
+    .insider { background:linear-gradient(135deg,var(--ink),#2d1a24); border-radius:20px; padding:36px 40px; display:flex; gap:24px; align-items:flex-start; }
+    .insider-icon { font-size:32px; flex-shrink:0; }
+    .insider-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--rose); font-weight:600; margin-bottom:8px; }
+    .insider-text { font-size:15px; line-height:1.75; color:rgba(255,255,255,.85); }
+    .insider-text strong { color:white; }
+
+    /* AUDIENCE */
+    .audience-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .persona { border-radius:20px; overflow:hidden; border:1px solid var(--border); background:white; }
+    .persona-header { padding:28px 28px 20px; background:linear-gradient(135deg,var(--blush),white); border-bottom:1px solid var(--border); }
+    .persona-emoji { font-size:36px; margin-bottom:12px; }
+    .persona-name { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--ink); }
+    .persona-age { font-size:13px; color:var(--rose); font-weight:500; margin-top:4px; letter-spacing:.5px; }
+    .persona-body { padding:24px 28px; }
+    .persona-row { display:flex; gap:10px; margin-bottom:12px; align-items:flex-start; }
+    .persona-row-label { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); font-weight:600; width:90px; flex-shrink:0; padding-top:2px; }
+    .persona-row-val { font-size:13px; color:var(--ink); line-height:1.6; }
+    .persona-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:16px; }
+    .persona-tag { font-size:11px; padding:4px 10px; background:var(--blush); color:var(--deep); border-radius:100px; font-weight:500; }
+
+    /* POSITIONING */
+    .positioning-box { background:linear-gradient(135deg,var(--blush),#fff0f5); border:1px solid var(--border); border-radius:20px; padding:40px; text-align:center; }
+    .positioning-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--rose); font-weight:600; margin-bottom:16px; }
+    .positioning-statement { font-family:'Playfair Display',serif; font-size:26px; font-style:italic; color:var(--ink); line-height:1.5; max-width:620px; margin:0 auto; }
+    .positioning-statement em { color:var(--deep); }
+    .pillars { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:28px; }
+    .pillar { background:white; border:1px solid var(--border); border-radius:14px; padding:20px; text-align:center; }
+    .pillar-icon { font-size:26px; margin-bottom:10px; }
+    .pillar-title { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+    .pillar-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+
+    /* CHANNELS */
+    .channels { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+    .channel-card { background:white; border:1px solid var(--border); border-radius:16px; padding:24px; transition:transform .2s, box-shadow .2s; position:relative; overflow:hidden; }
+    .channel-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--rose),var(--deep)); }
+    .channel-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px var(--shadow); }
+    .channel-icon { font-size:28px; margin-bottom:12px; }
+    .channel-name { font-size:14px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+    .channel-role { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--rose); font-weight:600; margin-bottom:12px; }
+    .channel-desc { font-size:13px; color:var(--muted); line-height:1.6; }
+    .channel-budget { display:inline-block; margin-top:12px; font-size:12px; font-weight:600; color:var(--deep); background:var(--blush); padding:4px 12px; border-radius:100px; }
+
+    /* TIMELINE */
+    .timeline { position:relative; padding-left:32px; }
+    .timeline::before { content:''; position:absolute; left:0; top:8px; bottom:8px; width:2px; background:var(--border); }
+    .phase { position:relative; margin-bottom:36px; }
+    .phase::before { content:''; position:absolute; left:-38px; top:6px; width:12px; height:12px; border-radius:50%; background:var(--rose); border:2.5px solid white; box-shadow:0 0 0 3px var(--border); }
+    .phase-tag { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--rose); font-weight:600; margin-bottom:6px; }
+    .phase-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--ink); margin-bottom:10px; }
+    .phase-items { display:flex; flex-direction:column; gap:8px; }
+    .phase-item { display:flex; align-items:flex-start; gap:10px; font-size:14px; color:var(--muted); line-height:1.6; }
+    .phase-item::before { content:'→'; color:var(--rose); flex-shrink:0; margin-top:1px; }
+
+    /* PRICE PARITY */
+    .parity-box { background:var(--amber-light); border:1px solid #ffe082; border-radius:16px; padding:28px 32px; display:flex; gap:20px; align-items:flex-start; }
+    .parity-icon { font-size:28px; flex-shrink:0; }
+    .parity-title { font-size:15px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+    .parity-text { font-size:14px; color:var(--muted); line-height:1.7; }
+
+    /* KPI TABLE */
+    .kpi-table { width:100%; border-collapse:collapse; }
+    .kpi-table th { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:500; padding:10px 16px; text-align:left; border-bottom:2px solid var(--border); }
+    .kpi-table td { font-size:14px; padding:14px 16px; border-bottom:1px solid var(--border); color:var(--ink); line-height:1.5; }
+    .kpi-table tr:last-child td { border-bottom:none; }
+    .kpi-table tr:hover td { background:var(--cream); }
+    .kpi-num { font-family:'Playfair Display',serif; font-weight:700; color:var(--deep); font-size:16px; }
+
+    /* BUDGET */
+    .budget-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .budget-card { background:white; border:1px solid var(--border); border-radius:14px; padding:20px; text-align:center; position:relative; overflow:hidden; }
+    .budget-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--rose),var(--deep)); }
+    .budget-amount { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--deep); }
+    .budget-label { font-size:12px; color:var(--muted); margin-top:5px; }
+    .budget-pct { font-size:11px; color:var(--rose); font-weight:600; margin-top:4px; }
+
+    footer { background:var(--ink); color:rgba(255,255,255,.4); text-align:center; padding:28px; font-size:12px; letter-spacing:1px; }
+    footer span { color:var(--rose); }
+
+    .fade-in { opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
+    .fade-in.visible { opacity:1; transform:translateY(0); }
+
+    ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--cream)} ::-webkit-scrollbar-thumb{background:var(--rose);border-radius:10px}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="portfolio.html">Antoanela <span>Ciulei</span></a>
+  <div class="nav-right">
+    <span class="nav-badge">📣 Portfolio Project</span>
+    <a class="nav-back" href="portfolio.html">← Back to portfolio</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero fade-in visible">
+  <div class="eyebrow">
+    <span class="eyebrow-tag">Brand Campaign Strategy</span>
+    <span class="eyebrow-note">Fictional case study · Nova Fashion · 2025</span>
+  </div>
+  <h1>Launching <em>Nova Fashion</em><br>online — a GTM strategy.</h1>
+  <p class="hero-sub">
+    A go-to-market plan for the fictional launch of Nova Fashion's e-commerce store,
+    targeting Romanian working women aged 28–45. Built on firsthand retail observations,
+    real consumer insight, and a sharp understanding of what makes Romanian women
+    trust — and buy from — a fashion brand online.
+  </p>
+  <div class="hero-pills">
+    <div class="pill"><strong>Brand:</strong> Nova Fashion (fictional)</div>
+    <div class="pill"><strong>Objective:</strong> Online store launch</div>
+    <div class="pill"><strong>Market:</strong> Romania</div>
+    <div class="pill"><strong>Audience:</strong> Women 28–45</div>
+    <div class="pill"><strong>Budget:</strong> €18,000</div>
+    <div class="pill"><strong>Timeline:</strong> 12 weeks</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- SITUATION ANALYSIS -->
+  <div class="fade-in">
+    <div class="section-label">01 — Situation Analysis</div>
+    <h2 class="section-title">Where Nova Fashion <em>stands.</em></h2>
+    <p class="prose">Nova Fashion is an established Romanian women's fashion brand with a loyal in-store customer base. It has strong brand recognition in Bucharest but zero e-commerce presence. This strategy outlines how to launch online without cannibalising in-store revenue — and without alienating its core customer.</p>
+
+    <div class="situation-grid">
+      <div class="situation-card sit-opportunity">
+        <div class="sit-label">Opportunities</div>
+        <div class="sit-item"><div class="sit-dot"></div>Romanian e-commerce grew 30%+ post-2020 — the core 28–45 segment is now comfortable shopping online</div>
+        <div class="sit-item"><div class="sit-dot"></div>No dominant Romanian fashion brand owns the "corporate elegant" online space</div>
+        <div class="sit-item"><div class="sit-dot"></div>Inclusive sizing and distinctive colour palettes are underserved in local fast fashion</div>
+        <div class="sit-item"><div class="sit-dot"></div>Online channel allows reach beyond Bucharest to Cluj, Timișoara, Iași</div>
+        <div class="sit-item"><div class="sit-dot"></div>Website discovery is already the #1 channel for this demographic — they're ready</div>
+      </div>
+      <div class="situation-card sit-challenge">
+        <div class="sit-label">Challenges</div>
+        <div class="sit-item"><div class="sit-dot"></div>Core customer is loyal to in-store experience — trust must be rebuilt online</div>
+        <div class="sit-item"><div class="sit-dot"></div>Price parity between online and in-store is critical — inconsistency kills trust</div>
+        <div class="sit-item"><div class="sit-dot"></div>Competition from Zara, H&M, and ASOS with established online infrastructure</div>
+        <div class="sit-item"><div class="sit-dot"></div>Returns and sizing uncertainty are key barriers for first-time online fashion buyers</div>
+        <div class="sit-item"><div class="sit-dot"></div>Low social media presence means brand awareness must be built from scratch online</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIDER INSIGHT -->
+  <div class="insider fade-in">
+    <div class="insider-icon">💡</div>
+    <div>
+      <div class="insider-label">Retail Insight — from the floor</div>
+      <p class="insider-text">
+        During my time in fashion retail, one friction point came up repeatedly:
+        <strong>the same item was cheaper on the brand's website than on the shop floor.</strong>
+        Customers noticed. Some felt cheated for coming in. Others pulled out their phones mid-conversation
+        to check. This single inconsistency eroded trust in both channels simultaneously.
+        <strong>For Nova Fashion's launch, price parity across online and in-store is non-negotiable</strong>
+        — it is the foundation everything else is built on.
+      </p>
+    </div>
+  </div>
+
+  <!-- PRICE PARITY STRATEGY -->
+  <div class="fade-in">
+    <div class="parity-box">
+      <div class="parity-icon">⚖️</div>
+      <div>
+        <div class="parity-title">Price Parity Policy — a launch requirement, not an afterthought</div>
+        <p class="parity-text">
+          Nova Fashion will enforce identical pricing across all channels from day one. Online-exclusive
+          promotions (e.g. launch discount codes) will be clearly labelled as temporary and
+          time-limited — never presented as the "real" price. In-store staff will be briefed
+          on the online offer so they can speak to it confidently rather than be caught off guard.
+          Any promotional difference must benefit the customer equally across both channels.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIENCE -->
+  <div class="fade-in">
+    <div class="section-label">02 — Target Audience</div>
+    <h2 class="section-title">Who we're <em>talking to.</em></h2>
+    <p class="prose">Two personas define the core audience. Both are women who value quality and image — but they discover products differently and need different messages to convert.</p>
+
+    <div class="audience-grid">
+      <div class="persona">
+        <div class="persona-header">
+          <div class="persona-emoji">👩‍💼</div>
+          <div class="persona-name">Elena, 34</div>
+          <div class="persona-age">The Corporate Professional · Primary target</div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-row">
+            <div class="persona-row-label">Lives</div>
+            <div class="persona-row-val">Bucharest, apartment, no kids yet</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Works</div>
+            <div class="persona-row-val">Marketing manager, hybrid schedule</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Discovers</div>
+            <div class="persona-row-val">Brand website during lunch break, occasional Instagram</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Buys when</div>
+            <div class="persona-row-val">She sees something she can wear to work AND out</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Hesitates if</div>
+            <div class="persona-row-val">Unsure about fit, or price feels unjustified</div>
+          </div>
+          <div class="persona-tags">
+            <span class="persona-tag">Corporate elegant</span>
+            <span class="persona-tag">Quality-first</span>
+            <span class="persona-tag">Website browser</span>
+            <span class="persona-tag">Loyal if trusted</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="persona-header">
+          <div class="persona-emoji">👩</div>
+          <div class="persona-name">Ioana, 42</div>
+          <div class="persona-age">The Established Shopper · Secondary target</div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-row">
+            <div class="persona-row-label">Lives</div>
+            <div class="persona-row-val">Bucharest or Cluj, homeowner, family</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Works</div>
+            <div class="persona-row-val">Senior role, values polish and discretion</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Discovers</div>
+            <div class="persona-row-val">Primarily in-store, warming up to website</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Buys when</div>
+            <div class="persona-row-val">She feels seen, helped, and not rushed</div>
+          </div>
+          <div class="persona-row">
+            <div class="persona-row-label">Hesitates if</div>
+            <div class="persona-row-val">"Do I really deserve this?" — self-permission barrier</div>
+          </div>
+          <div class="persona-tags">
+            <span class="persona-tag">Loyal browser</span>
+            <span class="persona-tag">High lifetime value</span>
+            <span class="persona-tag">Relationship-driven</span>
+            <span class="persona-tag">Quality over trend</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSITIONING -->
+  <div class="fade-in">
+    <div class="section-label">03 — Brand Positioning</div>
+    <h2 class="section-title">The image we <em>sell.</em></h2>
+
+    <div class="positioning-box">
+      <div class="positioning-label">Positioning Statement</div>
+      <div class="positioning-statement">
+        "Nova Fashion is the Romanian brand for women who dress with <em>intention</em> —
+        innovative designs, inclusive sizing, and a corporate elegance that doesn't ask you
+        to choose between looking powerful and feeling like yourself."
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-icon">🎨</div>
+        <div class="pillar-title">Distinctive Aesthetic</div>
+        <div class="pillar-desc">Bold colour palettes and original patterns that stand out from generic fast fashion — selling an image, not just a garment.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">📐</div>
+        <div class="pillar-title">Inclusive by Design</div>
+        <div class="pillar-desc">Extended sizing presented as standard, not an afterthought. Real women in campaign visuals — no single body type dominates.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">🇷🇴</div>
+        <div class="pillar-title">Proudly Romanian</div>
+        <div class="pillar-desc">Local brand, local values. Romanian women supporting Romanian design — a story that resonates and builds loyalty fast.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANNELS -->
+  <div class="fade-in">
+    <div class="section-label">04 — Channel Strategy</div>
+    <h2 class="section-title">Where we <em>show up.</em></h2>
+    <p class="prose">Each channel plays a specific role in the funnel. No channel is used for everything — focus and clarity drive better results than being everywhere at once.</p>
+
+    <div class="channels">
+      <div class="channel-card">
+        <div class="channel-icon">🌐</div>
+        <div class="channel-name">Website & SEO</div>
+        <div class="channel-role">Discovery & Conversion</div>
+        <div class="channel-desc">The primary discovery channel for the 28–45 segment. Editorial lookbooks, outfit guides, and size advice pages drive organic traffic and time-on-site. Product pages prioritise fit information and multiple styling options.</div>
+        <div class="channel-budget">35% of budget</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">📧</div>
+        <div class="channel-name">Email Marketing</div>
+        <div class="channel-role">Retention & Re-engagement</div>
+        <div class="channel-desc">Launch waitlist → exclusive early access email. Weekly editorial newsletter with new arrivals, styling tips, and behind-the-scenes. Abandoned basket sequences with no pressure — just a gentle reminder.</div>
+        <div class="channel-budget">15% of budget</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">📸</div>
+        <div class="channel-name">Instagram</div>
+        <div class="channel-role">Brand Building</div>
+        <div class="channel-desc">Aspirational but real. Campaign imagery of Romanian women in workplace and social settings — not studios. Stories used for behind-the-scenes and styling polls. Reels for product reveals and outfit transitions.</div>
+        <div class="channel-budget">20% of budget</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🎵</div>
+        <div class="channel-name">TikTok</div>
+        <div class="channel-role">Awareness (Secondary)</div>
+        <div class="channel-desc">Not the core channel for this demographic, but used selectively for "how to style" content and behind-the-scenes of the launch. Trend-adjacent without being trend-dependent.</div>
+        <div class="channel-budget">10% of budget</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🎯</div>
+        <div class="channel-name">Meta Ads</div>
+        <div class="channel-role">Acquisition</div>
+        <div class="channel-desc">Targeted at women 28–45 in major Romanian cities. Lookalike audiences built from in-store loyalty data. Creative focuses on product quality and brand story — not discounts.</div>
+        <div class="channel-budget">15% of budget</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🤝</div>
+        <div class="channel-name">Influencer Partnerships</div>
+        <div class="channel-role">Trust & Reach</div>
+        <div class="channel-desc">Micro-influencers (5K–50K), Romanian, working women or lifestyle creators. Authenticity over reach — one honest review from a relatable woman beats a mass campaign for this audience.</div>
+        <div class="channel-budget">5% of budget</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="fade-in">
+    <div class="section-label">05 — Launch Timeline</div>
+    <h2 class="section-title">12 weeks to <em>launch.</em></h2>
+
+    <div class="card">
+      <div class="timeline">
+        <div class="phase">
+          <div class="phase-tag">Weeks 1–3 · Pre-launch</div>
+          <div class="phase-title">Build anticipation before the doors open</div>
+          <div class="phase-items">
+            <div class="phase-item">Launch a "coming soon" landing page with waitlist sign-up — early subscribers get 15% off on launch day</div>
+            <div class="phase-item">Begin Instagram content: brand story, behind-the-scenes of the collection, team introductions</div>
+            <div class="phase-item">Brief in-store staff on the online launch — they become ambassadors, not competitors</div>
+            <div class="phase-item">Send PR packages to 5 selected Romanian micro-influencers with embargo date</div>
+            <div class="phase-item">Confirm price parity policy across all channels and update in-store POS materials</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-tag">Weeks 4–6 · Launch week</div>
+          <div class="phase-title">Make noise — then convert</div>
+          <div class="phase-items">
+            <div class="phase-item">Send launch email to waitlist with exclusive early access link (24h before public)</div>
+            <div class="phase-item">Go live on website — full collection, lookbook, size guide, and styling editorial</div>
+            <div class="phase-item">Influencer content goes live simultaneously across platforms</div>
+            <div class="phase-item">Activate Meta Ads targeting lookalike audiences — launch creative leads with brand story, not product</div>
+            <div class="phase-item">In-store: QR codes on mirrors and fitting rooms linking to the online store and wishlist feature</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-tag">Weeks 7–9 · Momentum</div>
+          <div class="phase-title">Learn fast, optimise faster</div>
+          <div class="phase-items">
+            <div class="phase-item">Analyse first-purchase data: which categories, which cities, which channels converting best</div>
+            <div class="phase-item">Launch abandoned basket email sequence for users who browsed but didn't buy</div>
+            <div class="phase-item">Introduce "style it with" cross-sell recommendations on product pages based on early sales data</div>
+            <div class="phase-item">Collect and publish first customer reviews — social proof is critical for the 28–45 segment</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-tag">Weeks 10–12 · Retention</div>
+          <div class="phase-title">Turn first-time buyers into loyal customers</div>
+          <div class="phase-items">
+            <div class="phase-item">Launch "Nova Insider" loyalty programme — points for purchases, reviews, and referrals</div>
+            <div class="phase-item">Send personalised "you might also love" emails based on first purchase category</div>
+            <div class="phase-item">Run 12-week performance review: CAC, ROAS, conversion rate, return rate, and NPS</div>
+            <div class="phase-item">Brief next collection campaign based on what sold and what the audience responded to</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUDGET -->
+  <div class="fade-in">
+    <div class="section-label">06 — Budget Allocation</div>
+    <h2 class="section-title">Where the <em>money goes.</em></h2>
+    <div class="budget-grid">
+      <div class="budget-card">
+        <div class="budget-amount">€6,300</div>
+        <div class="budget-label">Website & SEO</div>
+        <div class="budget-pct">35%</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€3,600</div>
+        <div class="budget-label">Meta Ads + TikTok</div>
+        <div class="budget-pct">20%</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€3,600</div>
+        <div class="budget-label">Instagram Content</div>
+        <div class="budget-pct">20%</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€2,700</div>
+        <div class="budget-label">Email Marketing</div>
+        <div class="budget-pct">15%</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€900</div>
+        <div class="budget-label">Influencer Seeding</div>
+        <div class="budget-pct">5%</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-amount">€900</div>
+        <div class="budget-label">Contingency</div>
+        <div class="budget-pct">5%</div>
+      </div>
+      <div class="budget-card" style="grid-column:span 2; background:var(--blush);">
+        <div class="budget-amount" style="font-size:32px;">€18,000</div>
+        <div class="budget-label">Total 12-week budget</div>
+        <div class="budget-pct">100%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="fade-in">
+    <div class="section-label">07 — Success Metrics</div>
+    <h2 class="section-title">How we know it <em>worked.</em></h2>
+    <div class="card">
+      <table class="kpi-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Target (12 weeks)</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Waitlist sign-ups</td>
+            <td><span class="kpi-num">1,500+</span></td>
+            <td style="color:var(--muted)">Measures pre-launch demand and validates the audience is ready</td>
+          </tr>
+          <tr>
+            <td>Website conversion rate</td>
+            <td><span class="kpi-num">≥ 3.2%</span></td>
+            <td style="color:var(--muted)">Romanian e-commerce average is ~2.5% — we aim above benchmark</td>
+          </tr>
+          <tr>
+            <td>Average order value</td>
+            <td><span class="kpi-num">€65+</span></td>
+            <td style="color:var(--muted)">Reflects the premium positioning and effective cross-selling</td>
+          </tr>
+          <tr>
+            <td>Email open rate</td>
+            <td><span class="kpi-num">≥ 38%</span></td>
+            <td style="color:var(--muted)">Fashion industry benchmark is ~22% — our list is warm and opted-in</td>
+          </tr>
+          <tr>
+            <td>Return rate</td>
+            <td><span class="kpi-num">≤ 18%</span></td>
+            <td style="color:var(--muted)">Good size guidance and honest product photography reduces returns</td>
+          </tr>
+          <tr>
+            <td>ROAS (Meta Ads)</td>
+            <td><span class="kpi-num">≥ 2.5×</span></td>
+            <td style="color:var(--muted)">Minimum viable return on paid spend for a launch campaign</td>
+          </tr>
+          <tr>
+            <td>Repeat purchase rate</td>
+            <td><span class="kpi-num">≥ 25%</span></td>
+            <td style="color:var(--muted)">The 28–45 segment is loyal — if we earn it, they come back</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Brand Campaign Strategy · <span>Antoanela Ciulei</span> · Nova Fashion (fictional case study) · 2025
+</footer>
+
+<script>
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  fadeEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
