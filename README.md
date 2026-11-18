@@ -4,6 +4,7 @@ Hi! I'm Antoanela, a sales and operations professional based in Bucharest, Roman
 
 This portfolio is a collection of work that reflects how I think about marketing — grounded in real retail experience, built with curiosity, and always honest about what's real and what's a creative exercise.
 
+Live Site: https://marketingportofolio.netlify.app
 ---
 
 ## Files
